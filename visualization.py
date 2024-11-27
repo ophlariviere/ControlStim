@@ -1,19 +1,34 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QVBoxLayout, QHBoxLayout, QLineEdit, QLabel, QComboBox,
-    QCheckBox, QPushButton, QWidget, QGroupBox, QScrollArea, QSpinBox
+    QApplication,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLineEdit,
+    QComboBox,
+    QCheckBox,
+    QPushButton,
+    QWidget,
+    QGroupBox,
+    QSpinBox,
 )
 
-from pyScienceMode import Channel, Device, Modes
+from pyScienceMode import Channel
 from pyScienceMode import RehastimP24 as St
 import logging
-logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s"
+)
 if not logging.getLogger().hasHandlers():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.basicConfig(
+        level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
+    )
+
 
 # Simuler les objets Channel, Device, Modes, et St
 class Device:
     Rehastimp24 = "Rehastimp24"
+
 
 class Modes:
     SINGLE = "SINGLE"
@@ -70,7 +85,9 @@ class VisualizationWidget(QWidget):
         self.stimulator_is_active = False
 
     def update_channel_inputs(self):
-        selected_channels = [i + 1 for i, checkbox in enumerate(self.checkboxes) if checkbox.isChecked()]
+        selected_channels = [
+            i + 1 for i, checkbox in enumerate(self.checkboxes) if checkbox.isChecked()
+        ]
 
         # Ajouter les nouveaux canaux sélectionnés
         for channel in selected_channels:
@@ -118,8 +135,10 @@ class VisualizationWidget(QWidget):
 
     def start_stimulation(self, channel_to_send):
         try:
-            if self.stimulator == None:
-                logging.warning("Stimulateur non initialisé. Veuillez le configurer avant de démarrer.")
+            if self.stimulator is None:
+                logging.warning(
+                    "Stimulateur non initialisé. Veuillez le configurer avant de démarrer."
+                )
                 return
 
             self.channels = []
@@ -145,7 +164,6 @@ class VisualizationWidget(QWidget):
                         device_type=Device.Rehastimp24,
                     )
                 self.channels.append(channel_obj)
-
 
             self.stimulator.init_stimulation(list_channels=self.channels)
             self.stimulator.start_stimulation(
@@ -180,15 +198,11 @@ class VisualizationWidget(QWidget):
             logging.error(f"Erreur lors de l'arrêt de la stimulation : {e}")
 
     def update_stimulation(self):
-        if self.stimulator == None:
-            self.stimulator = St(
-                port="COM3", show_log="Status"
-            )
+        if self.stimulator is None:
+            self.stimulator = St(port="COM3", show_log="Status")
             self.stimulator_is_active = True
 
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    window = StimulatorApp()
-    window.show()
     sys.exit(app.exec_())
