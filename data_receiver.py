@@ -35,7 +35,17 @@ class DataReceiver(QObject):
         while True:
             tic = time.time()
             try:
-                received_data = self.tcp_client.get_data_from_server(command=["Force"])
+                for _ in range(3):  # Tentatives multiples
+                    try:
+                        received_data = self.tcp_client.get_data_from_server(command=["Force"])
+                        break  # Si réussi, quittez la boucle
+                    except Exception as e:
+                        logging.warning(f"Tentative échouée : {e}")
+                        time.sleep(5)  # Attente avant la prochaine tentative
+                else:
+                    logging.error("Impossible de se connecter après plusieurs tentatives.")
+                    continue
+
                 if "Force" not in received_data or not received_data["Force"]:
                     logging.warning("Aucune donnée reçue depuis le serveur.")
                     continue

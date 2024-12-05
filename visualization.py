@@ -12,7 +12,7 @@ from PyQt5.QtWidgets import (
     QSpinBox,
 )
 
-from pyScienceMode import Channel
+from pyScienceMode import Channel, Device, Modes
 from pyScienceMode import RehastimP24 as St
 import logging
 
@@ -23,17 +23,6 @@ if not logging.getLogger().hasHandlers():
     logging.basicConfig(
         level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
     )
-
-
-# Simuler les objets Channel, Device, Modes, et St
-class Device:
-    Rehastimp24 = "Rehastimp24"
-
-
-class Modes:
-    SINGLE = "SINGLE"
-    DOUBLET = "DOUBLET"
-    TRIPLET = "TRIPLET"
 
 
 # Interface utilisateur
@@ -106,7 +95,7 @@ class VisualizationWidget(QWidget):
                 frequency_input.setRange(0, 200)
                 frequency_input.setPrefix("Hz ")
                 mode_input = QComboBox()
-                mode_input.addItems([Modes.SINGLE, Modes.DOUBLET, Modes.TRIPLET])
+                mode_input.addItems([mode.name for mode in Modes])
 
                 channel_layout.addWidget(name_input)
                 channel_layout.addWidget(amplitude_input)
@@ -176,7 +165,7 @@ class VisualizationWidget(QWidget):
     def stop_stimulation(self):
         try:
             if self.stimulator:
-                self.pause_stimulation()
+                # self.pause_stimulation()
                 self.stimulator.end_stimulation()
                 self.stimulator.close_port()
                 self.stimulator_is_active = False
